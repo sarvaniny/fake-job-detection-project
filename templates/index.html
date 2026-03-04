@@ -1,88 +1,141 @@
-from flask import Flask, render_template, request
-import joblib
-import os
+<!DOCTYPE html>
+<html>
 
-from analysis.keyword_checker import check_keywords
-from analysis.email_checker import check_email
-from analysis.salary_checker import check_salary
-from analysis.risk_score import calculate_risk_score
-from analysis.explain_prediction import explain_prediction
+<head>
 
-app = Flask(__name__)
+<title>JobSafe</title>
 
-# Load model
-model = joblib.load("model/job_model.pkl")
-vectorizer = joblib.load("model/vectorizer.pkl")
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-@app.route("/", methods=["GET", "POST"])
-def index():
+</head>
 
-    result = None
+<body>
 
-    if request.method == "POST":
+<!-- SIDEBAR -->
 
-        job_description = request.form.get("job_description")
-        recruiter_email = request.form.get("recruiter_email")
+<div class="sidebar">
 
-        if job_description:
+<h2>JobSafe</h2>
 
-            # ML prediction
-            vector = vectorizer.transform([job_description])
-            prediction = model.predict(vector)[0]
+<a href="/">Analyzer</a>
+<a href="/assistant">Assistant</a>
+<a href="/dashboard">Dashboard</a>
 
-            try:
-                confidence = abs(model.decision_function(vector)[0])
-                confidence = round(min(confidence * 10, 100), 2)
-            except:
-                confidence = 80
-
-            if prediction == 1:
-                prediction_label = "Fraudulent"
-            else:
-                prediction_label = "Legitimate"
-
-            # Run analysis modules
-            keyword_flags = check_keywords(job_description)
-            email_risk = check_email(recruiter_email)
-            salary_risk = check_salary(job_description)
-
-            explanation = explain_prediction(
-                job_description,
-                keyword_flags,
-                email_risk,
-                salary_risk
-            )
-
-            risk_score = calculate_risk_score(
-                prediction,
-                keyword_flags,
-                email_risk,
-                salary_risk
-            )
-
-            result = {
-                "prediction": prediction_label,
-                "confidence": confidence,
-                "keywords": keyword_flags,
-                "email_risk": email_risk,
-                "salary_risk": salary_risk,
-                "risk_score": risk_score,
-                "explanation": explanation
-            }
-
-    return render_template("index.html", result=result)
+</div>
 
 
-@app.route("/assistant")
-def assistant():
-    return render_template("assistant.html")
+<!-- MAIN CONTENT -->
+
+<div class="app-container">
+
+<h1>Job Post Analyzer</h1>
+
+<div class="card">
+
+<form method="POST">
+
+<textarea
+name="job_description"
+placeholder="Paste job description here"
+required></textarea>
+
+<br>
+
+<input
+type="text"
+name="recruiter_email"
+placeholder="Recruiter Email (optional)">
+
+<br>
+
+<button type="submit">Analyze Job</button>
+
+</form>
+
+</div>
 
 
-@app.route("/dashboard")
-def dashboard():
-    return render_template("dashboard.html")
+
+{% if result %}
+
+<div class="card result">
+
+<h2>{{ result.prediction }}</h2>
+
+<p><b>Model Confidence:</b> {{ result.confidence }}%</p>
+
+<p><b>Fraud Risk Score:</b> {{ result.risk_score }}/100</p>
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+<!-- RISK METER -->
+
+<canvas id="riskMeter" width="300" height="200"></canvas>
+
+
+<h3>Detailed Analysis</h3>
+
+<ul>
+
+{% for i in result.insights %}
+<li>{{ i }}</li>
+{% endfor %}
+
+</ul>
+
+
+{% if result.keywords %}
+
+<h3>Detected Suspicious Keywords</h3>
+
+<ul>
+
+{% for k in result.keywords %}
+<li>{{ k }}</li>
+{% endfor %}
+
+</ul>
+
+{% endif %}
+
+</div>
+
+
+<script>
+
+var risk = {{ result.risk_score }}
+
+var ctx = document.getElementById('riskMeter')
+
+new Chart(ctx, {
+
+type: 'doughnut',
+
+data: {
+
+datasets: [{
+data: [risk, 100-risk],
+backgroundColor: ['#ff4d6d','#222']
+}]
+
+},
+
+options:{
+rotation:-90,
+circumference:180,
+plugins:{legend:{display:false}}
+}
+
+})
+
+</script>
+
+{% endif %}
+
+
+</div>
+
+</body>
+
+</html>
