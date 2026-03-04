@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-<title>Dashboard</title>
+
+<title>JobSafe Dashboard</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 
 <body>
@@ -14,35 +15,20 @@
 
 <a href="/">Analyzer</a>
 <a href="/assistant">Assistant</a>
-<a href="/dashboard">Dashboard</a>
+<a href="/dashboard" class="active">Dashboard</a>
 
 </div>
 
-<div class="app-container">
+<div class="main">
 
-<h1>Fraud Analytics Dashboard</h1>
-
-<div class="dashboard-grid">
+<h1>Analysis Dashboard</h1>
 
 <div class="card">
-<h3>Total Jobs Analyzed</h3>
-<p>{{total}}</p>
-</div>
 
-<div class="card">
-<h3>High Risk Jobs</h3>
-<p>{{high}}</p>
-</div>
-
-<div class="card">
-<h3>Moderate Risk Jobs</h3>
-<p>{{medium}}</p>
-</div>
-
-<div class="card">
-<h3>Low Risk Jobs</h3>
-<p>{{low}}</p>
-</div>
+<p>Total Analyses: {{total}}</p>
+<p>High Risk: {{high}}</p>
+<p>Moderate Risk: {{medium}}</p>
+<p>Low Risk: {{low}}</p>
 
 </div>
 

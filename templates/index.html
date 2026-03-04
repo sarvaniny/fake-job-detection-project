@@ -1,13 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>JobSafe Analyzer</title>
-
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<style>
+
+.analyzer-wrapper{
+max-width:850px;
+margin:auto;
+}
+
+.analyzer-wrapper textarea{
+height:220px;
+border-radius:18px;
+}
+
+.email-box{
+width:100%;
+margin-top:12px;
+}
+
+.email-box input{
+width:100%;
+height:46px;
+padding:10px;
+border-radius:18px;
+border:none;
+background:rgba(0,0,0,0.65);
+color:white;
+}
+
+.analyze-center{
+display:flex;
+justify-content:center;
+margin-top:16px;
+}
+
+.analyze-btn{
+width:180px;
+height:46px;
+background:#b22222;
+border:none;
+border-radius:50px;
+color:white;
+font-weight:600;
+cursor:pointer;
+}
+
+.analyze-btn:hover{
+background:#8b1a1a;
+}
+
+</style>
 
 </head>
 
@@ -17,34 +62,29 @@
 
 <h2>JobSafe</h2>
 
-<a href="/">Analyzer</a>
+<a href="/" class="active">Analyzer</a>
 <a href="/assistant">Assistant</a>
 <a href="/dashboard">Dashboard</a>
 
 </div>
 
+<div class="main">
 
-<div class="app-container">
+<div class="analyzer-wrapper">
 
 <h1>Job Post Analyzer</h1>
 
-<div class="analyzer-card">
+<form method="POST" class="analyzer-form">
 
-<form method="POST">
+<textarea name="job_description" placeholder="Paste job description here">{{ job_text }}</textarea>
 
-<textarea
-name="job_description"
-placeholder="Paste job description here"
->{{ job_text }}</textarea>
+<div class="email-box">
+<input name="recruiter_email" placeholder="Recruiter Email (optional)" value="{{ recruiter_email }}">
+</div>
 
-<input
-type="text"
-name="recruiter_email"
-placeholder="Recruiter Email (optional)"
-value="{{ recruiter_email }}"
->
-
-<button type="submit">Analyze Job</button>
+<div class="analyze-center">
+<button type="submit" class="analyze-btn">Analyze</button>
+</div>
 
 </form>
 
@@ -53,70 +93,84 @@ value="{{ recruiter_email }}"
 
 {% if result %}
 
-<div class="analysis-card">
+<div class="analyzer-wrapper">
+
+<div class="card">
 
 <h2>Fraud Risk Analysis</h2>
 
-<p>
-<strong>Risk Level:</strong>
+<p><b>Risk Level:</b> {{ result.level }}</p>
 
-{% if result.level == "HIGH RISK" %}
-<span class="risk-high">{{ result.level }}</span>
-{% elif result.level == "MODERATE RISK" %}
-<span class="risk-medium">{{ result.level }}</span>
-{% else %}
-<span class="risk-low">{{ result.level }}</span>
-{% endif %}
+<p><b>Risk Score:</b> {{ result.score }}%</p>
 
-</p>
+<progress value="{{ result.score }}" max="100"></progress>
 
-<p><strong>Risk Score:</strong> {{ result.score }}%</p>
+<p><b>Scam Type:</b> {{ result.scam_type }}</p>
+
+</div>
 
 
-<h3>Risk Breakdown</h3>
+<div class="card">
 
-<p>Language Risk: {{ result.language_score }}%</p>
-<p>Payment Scam Risk: {{ result.payment_score }}%</p>
-<p>Urgency Manipulation: {{ result.urgency_score }}%</p>
-<p>Work From Home Risk: {{ result.remote_score }}%</p>
-<p>Email Credibility Risk: {{ result.email_score }}%</p>
-<p>Salary Realism Risk: {{ result.salary_score }}%</p>
+<h3>Risk Category Breakdown</h3>
+
+<p>Language Risk</p>
+<progress value="{{ result.language_score }}" max="100"></progress>
+
+<p>Payment Risk</p>
+<progress value="{{ result.payment_score }}" max="100"></progress>
+
+<p>Urgency Pressure</p>
+<progress value="{{ result.urgency_score }}" max="100"></progress>
+
+<p>Remote Job Risk</p>
+<progress value="{{ result.remote_score }}" max="100"></progress>
+
+<p>Crypto Risk</p>
+<progress value="{{ result.crypto_score }}" max="100"></progress>
+
+<p>Email Risk</p>
+<progress value="{{ result.email_score }}" max="100"></progress>
+
+<p>Salary Risk</p>
+<progress value="{{ result.salary_score }}" max="100"></progress>
+
+</div>
 
 
-<h3>Detected Scam Type</h3>
-
-<p>{{ result.scam_type }}</p>
-
+<div class="card">
 
 <h3>Highlighted Job Description</h3>
 
 <p>{{ result.highlighted_text | safe }}</p>
 
+</div>
 
-<h3>Detailed Findings</h3>
+
+<div class="card">
+
+<h3>Explanation</h3>
 
 <ul>
-
-{% for item in result.explanations %}
-
-<li>{{ item }}</li>
-
+{% for e in result.explanations %}
+<li>{{ e }}</li>
 {% endfor %}
-
 </ul>
 
+</div>
+
+
+<div class="card">
 
 <h3>Safety Recommendations</h3>
 
 <ul>
-
-{% for tip in result.recommendations %}
-
-<li>{{ tip }}</li>
-
+{% for r in result.recommendations %}
+<li>{{ r }}</li>
 {% endfor %}
-
 </ul>
+
+</div>
 
 </div>
 
@@ -125,5 +179,4 @@ value="{{ recruiter_email }}"
 </div>
 
 </body>
-
 </html>
