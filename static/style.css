@@ -1,0 +1,206 @@
+/* ---------- GLOBAL ---------- */
+
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+background:url('/static/bg.jpg') center center no-repeat fixed;
+background-size:cover;
+color:white;
+}
+
+/* ---------- SIDEBAR ---------- */
+
+.sidebar{
+position:fixed;
+top:25px;
+left:25px;
+width:240px;
+height:calc(100vh - 50px);
+
+background:rgba(0,0,0,0.65);
+backdrop-filter:blur(20px);
+
+border-radius:24px;
+padding:30px;
+
+box-shadow:0 20px 60px rgba(0,0,0,0.6);
+}
+
+.sidebar h2{
+margin-top:0;
+margin-bottom:35px;
+font-weight:600;
+}
+
+.sidebar a{
+display:block;
+color:white;
+text-decoration:none;
+margin-bottom:20px;
+font-size:16px;
+opacity:0.75;
+}
+
+.sidebar a:hover{
+opacity:1;
+}
+
+/* ---------- MAIN AREA ---------- */
+
+.main{
+margin-left:300px;
+padding:80px;
+}
+
+/* ---------- GLASS CARD ---------- */
+
+.card{
+background:rgba(0,0,0,0.55);
+backdrop-filter:blur(20px);
+
+padding:35px;
+border-radius:26px;
+
+width:720px;
+
+box-shadow:0 20px 50px rgba(0,0,0,0.5);
+}
+
+/* ---------- INPUTS ---------- */
+
+textarea{
+width:100%;
+height:180px;
+
+background:#0f0f0f;
+border:1px solid rgba(255,255,255,0.15);
+
+border-radius:14px;
+padding:15px;
+
+color:white;
+font-size:14px;
+}
+
+input{
+width:260px;
+margin-top:15px;
+
+background:#0f0f0f;
+border:1px solid rgba(255,255,255,0.15);
+
+border-radius:12px;
+padding:10px;
+color:white;
+}
+
+/* ---------- BUTTON ---------- */
+
+button{
+margin-top:18px;
+
+background:linear-gradient(135deg,#ff8a00,#ff4d4d);
+border:none;
+
+padding:12px 26px;
+border-radius:12px;
+
+font-weight:600;
+color:white;
+cursor:pointer;
+
+box-shadow:0 6px 20px rgba(255,100,100,0.4);
+}
+
+button:hover{
+transform:translateY(-1px);
+}
+
+/* ---------- RESULT ---------- */
+
+.result{
+margin-top:25px;
+
+background:rgba(0,0,0,0.6);
+border-radius:18px;
+padding:20px;
+
+backdrop-filter:blur(15px);
+}
+
+/* ---------- CHAT ---------- */
+
+.chat-card{
+width:720px;
+height:500px;
+
+background:rgba(0,0,0,0.55);
+backdrop-filter:blur(20px);
+
+border-radius:26px;
+
+display:flex;
+flex-direction:column;
+
+box-shadow:0 20px 50px rgba(0,0,0,0.6);
+}
+
+/* messages area */
+
+.chat-messages{
+flex:1;
+padding:20px;
+overflow-y:auto;
+}
+
+/* bot message */
+
+.bot{
+background:#2c2c2c;
+padding:12px 16px;
+border-radius:14px;
+
+margin-bottom:12px;
+max-width:65%;
+}
+
+/* user message */
+
+.user{
+background:#ff4d4d;
+padding:12px 16px;
+border-radius:14px;
+
+margin-left:auto;
+margin-bottom:12px;
+max-width:65%;
+}
+
+/* input area */
+
+.chat-input-area{
+display:flex;
+padding:15px;
+border-top:1px solid rgba(255,255,255,0.1);
+}
+
+.chat-input{
+flex:1;
+
+background:#111;
+border:none;
+
+padding:12px;
+border-radius:12px;
+
+color:white;
+}
+
+.chat-send{
+margin-left:10px;
+background:#ff4d4d;
+border:none;
+border-radius:10px;
+padding:10px 16px;
+color:white;
+}
