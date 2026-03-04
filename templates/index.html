@@ -1,19 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>JobSafe</title>
+<title>JobSafe Analyzer</title>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
 <body>
-
-<!-- SIDEBAR -->
 
 <div class="sidebar">
 
@@ -26,29 +24,25 @@
 </div>
 
 
-<!-- MAIN CONTENT -->
-
 <div class="app-container">
 
 <h1>Job Post Analyzer</h1>
 
-<div class="card">
+<div class="analyzer-card">
 
 <form method="POST">
 
 <textarea
 name="job_description"
 placeholder="Paste job description here"
-required></textarea>
-
-<br>
+>{{ job_text }}</textarea>
 
 <input
 type="text"
 name="recruiter_email"
-placeholder="Recruiter Email (optional)">
-
-<br>
+placeholder="Recruiter Email (optional)"
+value="{{ recruiter_email }}"
+>
 
 <button type="submit">Analyze Job</button>
 
@@ -57,82 +51,76 @@ placeholder="Recruiter Email (optional)">
 </div>
 
 
-
 {% if result %}
 
-<div class="card result">
+<div class="analysis-card">
 
-<h2>{{ result.prediction }}</h2>
+<h2>Fraud Risk Analysis</h2>
 
-<p><b>Model Confidence:</b> {{ result.confidence }}%</p>
+<p>
+<strong>Risk Level:</strong>
 
-<p><b>Fraud Risk Score:</b> {{ result.risk_score }}/100</p>
-
-
-<!-- RISK METER -->
-
-<canvas id="riskMeter" width="300" height="200"></canvas>
-
-
-<h3>Detailed Analysis</h3>
-
-<ul>
-
-{% for i in result.insights %}
-<li>{{ i }}</li>
-{% endfor %}
-
-</ul>
-
-
-{% if result.keywords %}
-
-<h3>Detected Suspicious Keywords</h3>
-
-<ul>
-
-{% for k in result.keywords %}
-<li>{{ k }}</li>
-{% endfor %}
-
-</ul>
-
+{% if result.level == "HIGH RISK" %}
+<span class="risk-high">{{ result.level }}</span>
+{% elif result.level == "MODERATE RISK" %}
+<span class="risk-medium">{{ result.level }}</span>
+{% else %}
+<span class="risk-low">{{ result.level }}</span>
 {% endif %}
+
+</p>
+
+<p><strong>Risk Score:</strong> {{ result.score }}%</p>
+
+
+<h3>Risk Breakdown</h3>
+
+<p>Language Risk: {{ result.language_score }}%</p>
+<p>Payment Scam Risk: {{ result.payment_score }}%</p>
+<p>Urgency Manipulation: {{ result.urgency_score }}%</p>
+<p>Work From Home Risk: {{ result.remote_score }}%</p>
+<p>Email Credibility Risk: {{ result.email_score }}%</p>
+<p>Salary Realism Risk: {{ result.salary_score }}%</p>
+
+
+<h3>Detected Scam Type</h3>
+
+<p>{{ result.scam_type }}</p>
+
+
+<h3>Highlighted Job Description</h3>
+
+<p>{{ result.highlighted_text | safe }}</p>
+
+
+<h3>Detailed Findings</h3>
+
+<ul>
+
+{% for item in result.explanations %}
+
+<li>{{ item }}</li>
+
+{% endfor %}
+
+</ul>
+
+
+<h3>Safety Recommendations</h3>
+
+<ul>
+
+{% for tip in result.recommendations %}
+
+<li>{{ tip }}</li>
+
+{% endfor %}
+
+</ul>
 
 </div>
 
-
-<script>
-
-var risk = {{ result.risk_score }}
-
-var ctx = document.getElementById('riskMeter')
-
-new Chart(ctx, {
-
-type: 'doughnut',
-
-data: {
-
-datasets: [{
-data: [risk, 100-risk],
-backgroundColor: ['#ff4d6d','#222']
-}]
-
-},
-
-options:{
-rotation:-90,
-circumference:180,
-plugins:{legend:{display:false}}
-}
-
-})
-
-</script>
-
 {% endif %}
-
 
 </div>
 

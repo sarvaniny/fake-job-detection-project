@@ -2,11 +2,8 @@
 <html>
 
 <head>
-
-<title>JobSafe Assistant</title>
-
-<link rel="stylesheet" href="/static/style.css">
-
+<title>Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
@@ -21,30 +18,55 @@
 
 </div>
 
-<div class="main">
+<div class="app-container">
 
 <h1>Job Safety Assistant</h1>
 
 <div class="chat-card">
 
-<div class="chat-messages">
-
-<div class="bot">
-Hello. Ask me about job scams.
-</div>
-
+<div id="chatMessages" class="chat-messages">
+<div class="bot">Ask me about job scams.</div>
 </div>
 
 <div class="chat-input-area">
 
-<input
-class="chat-input"
-placeholder="Ask about job scams...">
+<input id="chatInput" class="chat-input">
 
-<button class="chat-send">Send</button>
+<button onclick="sendMessage()">Send</button>
 
 </div>
 
 </div>
 
 </div>
+
+<script>
+
+function sendMessage(){
+
+let input=document.getElementById("chatInput")
+let msg=input.value
+
+if(msg==="")return
+
+let chat=document.getElementById("chatMessages")
+
+chat.innerHTML+=`<div class="user">${msg}</div>`
+
+fetch("/ask",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({question:msg})
+})
+.then(res=>res.json())
+.then(data=>{
+chat.innerHTML+=`<div class="bot">${data.answer}</div>`
+})
+
+input.value=""
+}
+
+</script>
+
+</body>
+</html>

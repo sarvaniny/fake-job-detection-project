@@ -2,11 +2,8 @@
 <html>
 
 <head>
-
-<title>JobSafe Dashboard</title>
-
-<link rel="stylesheet" href="/static/style.css">
-
+<title>Dashboard</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
@@ -21,14 +18,35 @@
 
 </div>
 
-<div class="main">
+<div class="app-container">
 
 <h1>Fraud Analytics Dashboard</h1>
 
+<div class="dashboard-grid">
+
 <div class="card">
+<h3>Total Jobs Analyzed</h3>
+<p>{{total}}</p>
+</div>
 
-<p>Fraud insights will appear here.</p>
+<div class="card">
+<h3>High Risk Jobs</h3>
+<p>{{high}}</p>
+</div>
 
+<div class="card">
+<h3>Moderate Risk Jobs</h3>
+<p>{{medium}}</p>
+</div>
+
+<div class="card">
+<h3>Low Risk Jobs</h3>
+<p>{{low}}</p>
 </div>
 
 </div>
+
+</div>
+
+</body>
+</html>
