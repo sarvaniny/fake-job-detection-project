@@ -5,6 +5,23 @@
 <title>JobSafe Dashboard</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
+<style>
+
+/* Match width with other modules */
+
+.dashboard-wrapper{
+max-width:850px;
+margin:auto;
+}
+
+/* Override card style only for dashboard */
+
+.dashboard-wrapper .card{
+border-radius:18px;
+}
+
+</style>
+
 </head>
 
 <body>
@@ -16,10 +33,14 @@
 <a href="/">Analyzer</a>
 <a href="/assistant">Assistant</a>
 <a href="/dashboard" class="active">Dashboard</a>
+<a href="/company-checker">Company Checker</a>
+<a href="/scam-library">Scam Library</a>
 
 </div>
 
 <div class="main">
+
+<div class="dashboard-wrapper">
 
 <h1>Analysis Dashboard</h1>
 
@@ -29,6 +50,8 @@
 <p>High Risk: {{high}}</p>
 <p>Moderate Risk: {{medium}}</p>
 <p>Low Risk: {{low}}</p>
+
+</div>
 
 </div>
 

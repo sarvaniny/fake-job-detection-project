@@ -66,6 +66,10 @@ CRYPTO_SCAMS = [
 "trading investment"
 ]
 
+KNOWN_COMPANIES = [
+"amazon","google","microsoft","apple","meta","netflix","tesla","ibm"
+]
+
 # ======================
 # HELPER FUNCTIONS
 # ======================
@@ -103,7 +107,7 @@ def detect_salary(text):
 
         n=int(n)
 
-        if n>200000:
+        if n>3000:
             return True
 
     return False
@@ -117,6 +121,30 @@ def check_email(email):
     domain=email.split("@")[-1]
 
     if domain in FREE_EMAIL_DOMAINS:
+        return True
+
+    return False
+
+
+def company_email_mismatch(text,email):
+
+    if not email:
+        return False
+
+    domain=email.split("@")[-1]
+
+    for company in KNOWN_COMPANIES:
+        if company in text.lower() and company not in domain:
+            return True
+
+    return False
+
+
+def detect_duplicate_email(text):
+
+    emails=re.findall(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}",text)
+
+    if len(emails)>1:
         return True
 
     return False
@@ -154,6 +182,8 @@ def analyze_job(text,email):
 
     salary_risk = detect_salary(text)
     email_risk = check_email(email)
+    email_mismatch = company_email_mismatch(text,email)
+    duplicate_email = detect_duplicate_email(text)
 
     language_score = min(len(keyword_hits)*15,40)
     payment_score = min(len(payment_hits)*25,60)
@@ -161,8 +191,10 @@ def analyze_job(text,email):
     remote_score = min(len(remote_hits)*10,30)
     crypto_score = min(len(crypto_hits)*25,60)
 
-    salary_score = 20 if salary_risk else 0
+    salary_score = 15 if salary_risk else 0
     email_score = 20 if email_risk else 0
+    mismatch_score = 20 if email_mismatch else 0
+    duplicate_score = 10 if duplicate_email else 0
 
     ml_score = int(ml_prob*100)
 
@@ -175,6 +207,8 @@ def analyze_job(text,email):
         + crypto_score
         + salary_score
         + email_score
+        + mismatch_score
+        + duplicate_score
     )
 
     total_score = min(int(raw_score),100)
@@ -197,34 +231,101 @@ def analyze_job(text,email):
 
     explanations=[]
 
-    if ml_prob>0.7:
-        explanations.append("Machine learning analysis suggests the posting resembles known job scams.")
-
-    if payment_hits:
-        explanations.append("The job requires payment or registration fees which legitimate employers rarely request.")
-
-    if keyword_hits:
-        explanations.append("The description promises easy or guaranteed income which is commonly used in fraudulent advertisements.")
+    # ======================
+    # EMAIL ANALYSIS
+    # ======================
 
     if email_risk:
-        explanations.append("The recruiter uses a free email domain rather than an official company email.")
+        explanations.append(
+        "Email Legitimacy Analysis: The recruiter email uses a public email provider (such as Gmail or Yahoo). "
+        "Legitimate companies typically communicate using official corporate domains. "
+        "Free email providers are commonly used in fraudulent recruitment schemes because they allow anonymous account creation."
+        )
+
+    if email_mismatch:
+        explanations.append(
+        "Company Identity Mismatch: The job description references a well-known company, "
+        "but the recruiter email domain does not match the official company domain. "
+        "Impersonation of well-known companies is a frequent tactic used in job scams."
+        )
+
+    if duplicate_email:
+        explanations.append(
+        "Recruitment Behavior Analysis: The same recruiter email address appears multiple times in the job posting. "
+        "Repeated contact information may indicate mass-distributed scam postings."
+        )
+
+    # ======================
+    # JOB CONTENT ANALYSIS
+    # ======================
 
     if salary_risk:
-        explanations.append("The salary mentioned appears unusually high compared to typical job postings.")
+        explanations.append(
+        "Compensation Risk Analysis: The salary mentioned in the job description appears unusually high for "
+        "a role that requires little or no prior experience. Scammers often advertise inflated salaries "
+        "to attract a large number of applicants quickly."
+        )
+
+    if urgency_hits:
+        explanations.append(
+        "Recruitment Pressure Indicators: The job description contains urgency phrases such as "
+        "'apply immediately' or 'limited slots'. Scammers often create artificial urgency "
+        "to prevent candidates from properly verifying the job offer."
+        )
+
+    # ======================
+    # SCAM PATTERN ANALYSIS
+    # ======================
+
+    if payment_hits:
+        explanations.append(
+        "Financial Request Detection: The job posting appears to request payment from applicants. "
+        "Legitimate employers rarely require candidates to pay registration fees, training deposits, "
+        "or equipment costs during recruitment."
+        )
 
     if crypto_hits:
-        explanations.append("The advertisement references cryptocurrency or trading profits which frequently appear in investment scams.")
+        explanations.append(
+        "Investment Scam Pattern: The advertisement references cryptocurrency trading or investment activity. "
+        "Many job scams use fake crypto trading roles to convince victims to deposit money into fraudulent platforms."
+        )
+
+    if remote_hits:
+        explanations.append(
+        "Remote Work Scam Pattern: The role resembles common remote job scam formats such as "
+        "data entry or online work positions that promise high pay with minimal experience."
+        )
+
+    # ======================
+    # MACHINE LEARNING ANALYSIS
+    # ======================
+
+    if ml_prob > 0.7:
+        explanations.append(
+        "Machine Learning Assessment: The job description shows strong similarity to patterns found "
+        "in previously identified fraudulent job postings."
+        )
 
     if not explanations:
-        explanations.append("No strong scam indicators were detected in this job posting.")
+        explanations.append(
+        "No strong scam indicators were detected. However applicants should still independently "
+        "verify the employer and avoid sharing sensitive information before confirming job legitimacy."
+        )
 
-    highlighted_text=highlight_text(text, SCAM_KEYWORDS+PAYMENT_PATTERNS)
+    highlighted_text = highlight_text(
+        text,
+        SCAM_KEYWORDS +
+        PAYMENT_PATTERNS +
+        URGENCY_WORDS +
+        REMOTE_SCAMS +
+        CRYPTO_SCAMS
+    )
 
     recommendations=[
-    "Never pay registration or training fees to apply for a job.",
-    "Verify the company using its official website and LinkedIn.",
-    "Search online for scam reports related to the recruiter.",
-    "Avoid jobs promising guaranteed income or extremely high salaries."
+    "Research the company using its official website and LinkedIn presence.",
+    "Avoid sending money or cryptocurrency during recruitment.",
+    "Verify recruiter email domains carefully.",
+    "Search online for scam reports related to the company."
     ]
 
     result={
@@ -245,6 +346,53 @@ def analyze_job(text,email):
     }
 
     return result
+
+
+# ======================
+# COMPANY CHECKER
+# ======================
+
+def analyze_company(name, website, email):
+
+    score = 100
+    flags = []
+
+    if email:
+        domain = email.split("@")[-1]
+        if domain in FREE_EMAIL_DOMAINS:
+            score -= 25
+            flags.append("Recruiter is using a free email domain instead of an official company email.")
+
+    if website and name:
+        if name.lower() not in website.lower():
+            score -= 20
+            flags.append("The website domain does not clearly match the company name.")
+
+    suspicious_words = ["crypto","investment","guaranteed","profit"]
+
+    text = (website or "") + (email or "")
+
+    for word in suspicious_words:
+        if word in text.lower():
+            score -= 15
+            if "Suspicious financial or investment related terms detected." not in flags:
+                flags.append("Suspicious financial or investment related terms detected.")
+
+    if score < 0:
+        score = 0
+
+    if score >= 85:
+        level = "HIGH TRUST"
+    elif score >= 60:
+        level = "MODERATE TRUST"
+    else:
+        level = "LOW TRUST"
+
+    return {
+        "score": score,
+        "level": level,
+        "flags": flags if flags else ["No strong risk indicators detected."]
+    }
 
 
 # ======================
@@ -298,6 +446,36 @@ def dashboard():
     )
 
 
+@app.route("/company-checker", methods=["GET","POST"])
+def company_checker():
+
+    result=None
+    name=""
+    website=""
+    email=""
+
+    if request.method=="POST":
+
+        name=request.form.get("company_name")
+        website=request.form.get("company_website")
+        email=request.form.get("recruiter_email")
+
+        result=analyze_company(name,website,email)
+
+    return render_template(
+        "company_checker.html",
+        result=result,
+        company_name=name,
+        company_website=website,
+        recruiter_email=email
+    )
+
+
+@app.route("/scam-library")
+def scam_library():
+    return render_template("scam_library.html")
+
+
 # ======================
 # SMART ASSISTANT
 # ======================
@@ -307,44 +485,23 @@ def ask():
 
     question=request.json["question"].lower()
 
-    # positive signals first
-
-    if "company email" in question or "official email" in question:
-        return jsonify({
-        "answer":"Yes, that is generally a positive sign. Legitimate recruiters typically use official company email domains. However, you should still verify the company and job posting."
-        })
+    if "official email" in question or "company email" in question:
+        return jsonify({"answer":"Yes, legitimate recruiters usually use official company email domains."})
 
     if "gmail" in question or "yahoo" in question:
-        return jsonify({
-        "answer":"Recruiters using free email services like Gmail or Yahoo may not represent a legitimate company. It is safer to verify the recruiter through the company website."
-        })
+        return jsonify({"answer":"Recruiters using free email services like Gmail or Yahoo may indicate a scam."})
 
-    if "fee" in question or "training fee" in question or "registration fee" in question:
-        return jsonify({
-        "answer":"Legitimate employers almost never ask candidates to pay registration or training fees during recruitment."
-        })
+    if "crypto" in question or "bitcoin" in question:
+        return jsonify({"answer":"Crypto trading job offers that require deposits are a common scam tactic."})
 
-    if "salary" in question or "earn" in question or "income" in question:
-        return jsonify({
-        "answer":"Be cautious of jobs promising extremely high income with little experience. Unrealistic salaries are commonly used in job scams."
-        })
+    if "data entry" in question or "work from home" in question:
+        return jsonify({"answer":"Many scams advertise simple work-from-home jobs with unrealistic salaries."})
 
-    if "crypto" in question or "bitcoin" in question or "trading" in question:
-        return jsonify({
-        "answer":"Many scams involve cryptocurrency trading opportunities promising guaranteed profits. Always research the company before engaging."
-        })
+    if "fee" in question or "pay" in question:
+        return jsonify({"answer":"Legitimate employers rarely ask candidates to pay fees during recruitment."})
 
-    if "remote" in question or "work from home" in question or "data entry" in question:
-        return jsonify({
-        "answer":"Remote jobs can be legitimate but scammers often disguise fraud as simple work-from-home or data entry jobs."
-        })
+    return jsonify({"answer":"Common signs of job scams include payment requests, unrealistic salaries, fake recruiters, and urgency pressure."})
 
-    return jsonify({
-    "answer":"Common signs of job scams include payment requests, unrealistic salaries, and urgent hiring pressure. Always research the company before applying."
-    })
-
-
-# ======================
 
 if __name__=="__main__":
     app.run(debug=True)

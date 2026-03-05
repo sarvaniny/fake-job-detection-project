@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Company Checker</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<style>
+
+.checker-wrapper{
+max-width:850px;
+margin:auto;
+}
+
+.checker-wrapper input{
+width:100%;
+height:46px;
+padding:10px;
+border-radius:18px;
+border:none;
+background:rgba(0,0,0,0.65);
+color:white;
+margin-top:12px;
+}
+
+.check-btn{
+width:200px;
+height:46px;
+background:#b22222;
+border:none;
+border-radius:50px;
+color:white;
+font-weight:600;
+cursor:pointer;
+margin-top:16px;
+}
+
+.check-btn:hover{
+background:#8b1a1a;
+}
+
+.btn-center{
+display:flex;
+justify-content:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+<h2>JobSafe</h2>
+
+<a href="/">Analyzer</a>
+<a href="/assistant">Assistant</a>
+<a href="/dashboard">Dashboard</a>
+<a href="/company-checker" class="active">Company Checker</a>
+<a href="/scam-library">Scam Library</a>
+
+</div>
+
+<div class="main">
+
+<div class="checker-wrapper">
+
+<h1>Company Legitimacy Checker</h1>
+
+<form method="POST">
+
+<input name="company_name" placeholder="Company Name" value="{{company_name}}">
+
+<input name="company_website" placeholder="Company Website" value="{{company_website}}">
+
+<input name="recruiter_email" placeholder="Recruiter Email" value="{{recruiter_email}}">
+
+<div class="btn-center">
+<button type="submit" class="check-btn">Check Company</button>
+</div>
+
+</form>
+
+{% if result %}
+
+<div class="card">
+
+<h3>Trust Score: {{result.score}}%</h3>
+
+<p><b>Trust Level:</b> {{result.level}}</p>
+
+<h4>Risk Indicators</h4>
+
+<ul>
+{% for f in result.flags %}
+<li>{{f}}</li>
+{% endfor %}
+</ul>
+
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</body>
+</html>
