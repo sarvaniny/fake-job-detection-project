@@ -41,7 +41,10 @@ PAYMENT_PATTERNS = [
 "processing fee",
 "security deposit",
 "investment required",
+"registration charge",
+"registration cost",
 "payment required",
+"verification fee",
 "pay a fee"
 ]
 

@@ -10,5 +10,52 @@
         "email": "recruitment.team@micr0soft-careers.site",
         "type": "Registration Fee Scam",
         "score": 100
+    },
+    {
+        "company": "amazon",
+        "email": "careers-amaz0n@globalconsultant.xyz",
+        "website": "",
+        "type": "Crypto Investment Scam",
+        "score": 100,
+        "date": "2026-03-08 19:28:44.718918"
+    },
+    {
+        "company": "CryptoJobProfits",
+        "email": "cryptoearnings@gmail.com",
+        "website": "cryptojobprofits.net",
+        "type": "Crypto Investment Scam",
+        "date": "2026-03-08 19:39:16.571642"
+    },
+    {
+        "company": "amazon",
+        "email": "Amazon Global Logistics Recruitment Program  Amazon is expanding its global remote logistics support team. We are currently hiring remote associates to assist our international delivery operations.  Position: Remote Logistics Coordination Assistant Location: Work From Home  Responsibilities: \u2022 Monitor shipment tracking systems \u2022 Update logistics records \u2022 Verify delivery confirmations in our online dashboard  Compensation: Earn $450 per day working just 2\u20133 hours daily.  Benefits: \u2022 No prior experience required \u2022 Flexible working hours \u2022 Immediate hiring \u2022 Weekly performance bonuses  Recruitment Process: Due to the high volume of applicants, candidates must complete a quick account verification before accessing the logistics platform.  A small refundable verification fee of $75 is required to activate your employee dashboard.  Please apply immediately as positions are limited.  Recruitment Contact: amazon.remote.jobs@consultant-recruitment.xyz",
+        "website": "",
+        "type": "Work From Home Scam",
+        "score": 100,
+        "date": "2026-03-08 19:41:35.035994"
+    },
+    {
+        "company": "google",
+        "email": "vendor.recruitment@google-workforce.online",
+        "website": "",
+        "type": "Registration Fee Scam",
+        "score": 75,
+        "date": "2026-03-08 19:54:46.531654"
+    },
+    {
+        "company": "Unknown",
+        "email": "",
+        "website": "",
+        "type": "Work From Home Scam",
+        "score": 75,
+        "date": "2026-03-08 19:54:59.582119"
+    },
+    {
+        "company": "amazon",
+        "email": "amazon-support-team@amazonworkforce.com",
+        "website": "",
+        "type": "Legitimate Job",
+        "score": 80,
+        "date": "2026-03-08 19:55:52.372649"
     }
 ]
