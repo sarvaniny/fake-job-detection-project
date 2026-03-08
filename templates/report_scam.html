@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Report Scam</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<style>
+
+.report-wrapper{
+max-width:850px;
+margin:auto;
+}
+
+.report-wrapper input,
+.report-wrapper select{
+
+width:100%;
+height:46px;
+padding:10px;
+border-radius:18px;
+border:none;
+background:rgba(0,0,0,0.65);
+color:white;
+margin-top:12px;
+}
+
+.report-btn{
+width:200px;
+height:46px;
+background:#b22222;
+border:none;
+border-radius:50px;
+color:white;
+font-weight:600;
+cursor:pointer;
+margin-top:16px;
+}
+
+.btn-center{
+display:flex;
+justify-content:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>JobSafe</h2>
+
+<a href="/">Analyzer</a>
+<a href="/assistant">Assistant</a>
+<a href="/dashboard">Dashboard</a>
+<a href="/company-checker">Company Checker</a>
+<a href="/scam-library">Scam Library</a>
+<a href="/report-scam" class="active">Report Scam</a>
+
+</div>
+
+<div class="main">
+
+<div class="report-wrapper">
+
+<h1>Report Suspicious Job or Company</h1>
+
+<form method="POST">
+
+<input name="company" placeholder="Company Name">
+
+<input name="email" placeholder="Recruiter Email">
+
+<input name="website" placeholder="Company Website">
+
+<select name="scam_type">
+
+<option value="">Select Scam Type</option>
+<option>Registration Fee Scam</option>
+<option>Crypto Investment Scam</option>
+<option>Data Entry Scam</option>
+<option>Task Scam</option>
+<option>Fake Recruiter Scam</option>
+
+</select>
+
+<div class="btn-center">
+
+<button type="submit" class="report-btn">Submit Report</button>
+
+</div>
+
+</form>
+
+{% if success %}
+
+<div class="card">
+
+<h3>Report Submitted</h3>
+
+<p>Thank you for reporting this suspicious job. The information will help detect future scams.</p>
+
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</body>
+</html>

@@ -3,18 +3,16 @@
 <head>
 
 <title>JobSafe Dashboard</title>
+
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-
-/* Match width with other modules */
 
 .dashboard-wrapper{
 max-width:850px;
 margin:auto;
 }
-
-/* Override card style only for dashboard */
 
 .dashboard-wrapper .card{
 border-radius:18px;
@@ -35,6 +33,7 @@ border-radius:18px;
 <a href="/dashboard" class="active">Dashboard</a>
 <a href="/company-checker">Company Checker</a>
 <a href="/scam-library">Scam Library</a>
+<a href="/report-scam">Report Scam</a>
 
 </div>
 
@@ -53,9 +52,123 @@ border-radius:18px;
 
 </div>
 
+
+<div class="card">
+
+<h3>Analyzer Usage Statistics</h3>
+
+<p>Average Risk Score: {{avg_risk}}%</p>
+
+</div>
+
+
+<div class="card">
+
+<h3>Scam Reports Submitted</h3>
+
+<p>Total Reports: {{report_count}}</p>
+
+</div>
+
+
+<div class="card">
+
+<h3>Risk Distribution</h3>
+
+<canvas
+id="riskChart"
+data-high="{{high}}"
+data-medium="{{medium}}"
+data-low="{{low}}">
+</canvas>
+
+</div>
+
+
+<div class="card">
+
+<h3>Scam Type Distribution</h3>
+
+<canvas
+id="scamChart"
+data-scams='{{ scam_types | tojson }}'>
+</canvas>
+
+</div>
+
+
+<div class="card">
+
+<h3>Recent Analyses</h3>
+
+<ul>
+
+{% for r in recent_analyses %}
+
+<li>
+<b>{{r.level}}</b> — {{r.scam_type}} ({{r.score}}%)
+</li>
+
+{% endfor %}
+
+</ul>
+
 </div>
 
 </div>
+
+</div>
+
+
+<script>
+
+// RISK DATA
+const riskCanvas = document.getElementById("riskChart");
+
+const high = parseInt(riskCanvas.dataset.high);
+const medium = parseInt(riskCanvas.dataset.medium);
+const low = parseInt(riskCanvas.dataset.low);
+
+
+// SCAM DATA
+const scamCanvas = document.getElementById("scamChart");
+const scamData = JSON.parse(scamCanvas.dataset.scams);
+
+const scamLabels = Object.keys(scamData);
+const scamValues = Object.values(scamData);
+
+
+// PIE CHART
+new Chart(riskCanvas, {
+type: "pie",
+data: {
+labels: ["High Risk","Moderate Risk","Low Risk"],
+datasets: [{
+data: [high, medium, low],
+backgroundColor: [
+"#b22222",
+"#ffb347",
+"#4CAF50"
+]
+}]
+}
+});
+
+
+// BAR CHART
+new Chart(scamCanvas, {
+type: "bar",
+data: {
+labels: scamLabels,
+datasets: [{
+label: "Detected Scams",
+data: scamValues,
+backgroundColor: "#b22222"
+}]
+}
+});
+
+</script>
 
 </body>
 </html>
